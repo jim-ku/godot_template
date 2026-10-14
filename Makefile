@@ -6,10 +6,10 @@ TIMEOUT_CHECK ?= 60
 TIMEOUT_RUN ?= 30
 LOG_DIR := logs
 
-.PHONY: help import check-gdscript headless-boot preview export-android-debug versions clean-logs
+.PHONY: help import check-gdscript headless-boot qa-gate preview export-android-debug versions clean-logs
 
 help:
-	@echo "Targets: import | check-gdscript | headless-boot | preview | export-android-debug | versions"
+	@echo "Targets: import | check-gdscript | headless-boot | qa-gate | preview | export-android-debug | versions"
 	@echo "GODOT=$(GODOT)  PROJECT=$(PROJECT)"
 
 versions:
@@ -44,6 +44,21 @@ headless-boot: versions
 	    echo "runtime smoke FAILED"; exit 1; \
 	  fi; \
 	  tail -n 40 $(LOG_DIR)/headless-boot.log; exit $$ec
+
+
+# Programmatic interaction gate (QA). Emits Button.pressed — not OS hit-test. Not a full suite.
+qa-gate: versions
+	@mkdir -p $(LOG_DIR)
+	@test -f tools/qa_interaction_gate.gd
+	timeout $(TIMEOUT_CHECK) $(GODOT) --headless --path $(PROJECT) -s res://tools/qa_interaction_gate.gd > $(LOG_DIR)/qa-gate.log 2>&1; \
+	  ec=$$?; echo "qa-gate exit=$$ec"; \
+	  if ! rg -q "QA_GATE_PASS" $(LOG_DIR)/qa-gate.log; then \
+	    echo "qa-gate FAILED (missing QA_GATE_PASS)"; tail -n 80 $(LOG_DIR)/qa-gate.log; exit 1; \
+	  fi; \
+	  if rg -n "QA_GATE_FAIL|SCRIPT ERROR|Parse Error" $(LOG_DIR)/qa-gate.log; then \
+	    echo "qa-gate FAILED"; exit 1; \
+	  fi; \
+	  tail -n 40 $(LOG_DIR)/qa-gate.log; exit $$ec
 
 # Interactive preview where a display is available.
 preview: versions

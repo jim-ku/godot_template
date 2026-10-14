@@ -39,6 +39,7 @@ make versions                 # -> 4.7.2.stable.official.ed1daf0bf
 make import                   # exit 0; logs/import.log
 make check-gdscript           # exit 0; no SCRIPT/Parse errors (NOT a full test suite)
 make headless-boot            # exit 0; runtime smoke only (NOT a full test suite)
+make qa-gate                  # exit 0; programmatic tap/save/load/mock gate (NOT OS hit-test)
 make export-android-debug     # exit 0; produced export/infra-demo-debug.apk (~27MB)
 make preview                  # needs DISPLAY; interactive, not CI
 ```
@@ -49,6 +50,7 @@ Timeouts are enforced via `timeout` in the Makefile. APK artifact is gitignored.
 
 1. `make check-gdscript` clean (no SCRIPT/Parse errors in log)
 2. `make headless-boot` clean
+3. `make qa-gate` clean when touching demo interaction/save/mocks
 3. If touching Android export: report whether an APK actually exists under `export/`
 4. Do not claim iOS success from Linux
 5. Do not claim real IAP/ads events from mocks
