@@ -1,0 +1,39 @@
+# Godot 4
+.godot/
+*.translation
+export_presets.cfg.bak
+
+# Exports / builds
+export/*.apk
+export/*.aab
+export/*.ipa
+export/*.xcarchive
+export/android/
+export/ios/
+*.apk
+*.aab
+*.ipa
+
+# OS / editor
+.DS_Store
+*~
+*.swp
+.import/
+
+# Secrets & machine-local
+.env
+.env.*
+!.env.example
+**/local.properties
+**/debug.keystore
+**/release.keystore
+**/*credentials*
+**/google-services.json
+**/GoogleService-Info.plist
+android/build/
+.android_sdk_path
+.export_credentials.cfg
+
+# Logs
+logs/
+*.log
